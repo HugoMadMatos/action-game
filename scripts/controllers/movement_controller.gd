@@ -11,12 +11,16 @@ const GRAVITY: float = 9.8
 
 # === REFERÊNCIA AO PARENT ===
 var _body: CharacterBody3D
+var _input: InputController
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
 	_body = get_parent() as CharacterBody3D
 	if not _body:
 		push_error("MovementController deve ser filho de CharacterBody3D")
+	
+	# Encontra o InputController no pai
+	_input = _body.get_node_or_null("InputController")
 
 # === MÉTODO PRINCIPAL ===
 func process_movement(delta: float) -> void:
@@ -40,6 +44,10 @@ func _handle_input() -> void:
 		_decelerate()
 
 func _get_input_direction() -> Vector2:
+	if _input:
+		return _input.get_movement_direction()
+	
+	# Fallback se input não estiver disponível
 	return Vector2(
 		Input.get_axis("ui_left", "ui_right"),
 		Input.get_axis("ui_up", "ui_down")

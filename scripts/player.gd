@@ -9,6 +9,7 @@ var _health: int = 100
 var _is_alive: bool = true
 
 # === CONTROLLERS (Composição) ===
+var input: InputController
 var movement: MovementController
 var interaction: InteractionController
 var attacks: AttackController
@@ -24,10 +25,12 @@ var health: int:
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
 	# Cria e adiciona controllers
+	input = InputController.new()
 	movement = MovementController.new()
 	interaction = InteractionController.new()
 	attacks = AttackController.new()
 	
+	add_child(input)
 	add_child(movement)
 	add_child(interaction)
 	add_child(attacks)
@@ -46,18 +49,18 @@ func _physics_process(delta: float) -> void:
 # === INPUTS ===
 func _handle_actions() -> void:
 	# Pulo
-	if Input.is_action_just_pressed("ui_accept"):
+	if input.is_any_jump_pressed():
 		movement.jump()
 	
 	# Interação
-	if Input.is_action_just_pressed("ui_focus_next"):
+	if input.is_any_interact_pressed():
 		interaction.try_interact()
 	
 	# Ataques
-	if Input.is_action_just_pressed("ui_select"):
+	if input.is_any_light_attack_pressed():
 		attacks.perform_attack("light")
 	
-	if Input.is_action_just_pressed("ui_cancel"):
+	if input.is_any_heavy_attack_pressed():
 		attacks.perform_attack("heavy")
 
 # === DANO E MORTE ===

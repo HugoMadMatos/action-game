@@ -14,29 +14,14 @@ const CAMERA_SENSITIVITY_GAMEPAD: float = 0.15
 var _movement_vector: Vector2 = Vector2.ZERO
 var _gamepad_movement: Vector2 = Vector2.ZERO
 var _camera_input: Vector2 = Vector2.ZERO
-var _connected_joypads: Dictionary = {}
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
-	# Detecta joysticks conectados
-	for device_id in range(4):
-		if Input.is_joy_known(device_id):
-			_connected_joypads[device_id] = true
-			print("Gamepad conectado: device %d" % device_id)
-	
-	if _connected_joypads.is_empty():
-		print("Nenhum gamepad detectado. Conecte e pressione um botão.")
-	
-	# Conecta sinal de conexão
-	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-
-func _on_joy_connection_changed(device: int, connected: bool) -> void:
-	if connected:
-		_connected_joypads[device] = true
-		print("Gamepad conectado: device %d" % device)
-	else:
-		_connected_joypads.erase(device)
-		print("Gamepad desconectado: device %d" % device)
+	# Testa se tem gamepad conectado
+	for device in range(4):
+		var name := Input.get_joy_name(device)
+		if name != "":
+			print("Gamepad detectado: device %d = %s" % [device, name])
 
 # === LOOP DE INPUT ===
 func _process(delta: float) -> void:
@@ -60,18 +45,12 @@ func _get_keyboard_movement() -> Vector2:
 		Input.get_axis("move_up", "move_down")
 	)
 
-func _get_first_joystick_id() -> int:
-	if _connected_joypads.is_empty():
-		return 0
-	return _connected_joypads.keys()[0]
-
 func _get_gamepad_movement() -> Vector2:
 	return _gamepad_movement
 
 func _update_gamepad_input() -> void:
-	var device := _get_first_joystick_id()
-	_gamepad_movement.x = Input.get_joy_axis(device, JOY_AXIS_LEFT_X)
-	_gamepad_movement.y = -Input.get_joy_axis(device, JOY_AXIS_LEFT_Y)
+	_gamepad_movement.x = Input.get_joy_axis(0, JOY_AXIS_LEFT_X)
+	_gamepad_movement.y = -Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
 	
 	# Aplica deadzone
 	if _gamepad_movement.length_squared() < MOVEMENT_DEADZONE:
@@ -94,20 +73,16 @@ func is_heavy_attack_pressed() -> bool:
 
 # === AÇÕES (Gamepad) ===
 func is_gamepad_jump_pressed() -> bool:
-	var device := _get_first_joystick_id()
-	return Input.is_joy_button_pressed(device, JOY_BUTTON_A)
+	return Input.is_joy_button_pressed(0, JOY_BUTTON_A)
 
 func is_gamepad_interact_pressed() -> bool:
-	var device := _get_first_joystick_id()
-	return Input.is_joy_button_pressed(device, JOY_BUTTON_X)
+	return Input.is_joy_button_pressed(0, JOY_BUTTON_X)
 
 func is_gamepad_light_attack_pressed() -> bool:
-	var device := _get_first_joystick_id()
-	return Input.is_joy_button_pressed(device, JOY_BUTTON_B)
+	return Input.is_joy_button_pressed(0, JOY_BUTTON_B)
 
 func is_gamepad_heavy_attack_pressed() -> bool:
-	var device := _get_first_joystick_id()
-	return Input.is_joy_button_pressed(device, JOY_BUTTON_Y)
+	return Input.is_joy_button_pressed(0, JOY_BUTTON_Y)
 
 # === COMBO DE INPUTS ===
 func is_any_jump_pressed() -> bool:
@@ -144,9 +119,8 @@ func _get_keyboard_camera_input() -> Vector2:
 	) * CAMERA_SENSITIVITY_KEYBOARD
 
 func _get_gamepad_camera_input() -> Vector2:
-	var device := _get_first_joystick_id()
-	var x := Input.get_joy_axis(device, JOY_AXIS_RIGHT_X)
-	var y := -Input.get_joy_axis(device, JOY_AXIS_RIGHT_Y)
+	var x := Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	var y := -Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
 	
 	var input := Vector2(x, y)
 	if input.length_squared() < CAMERA_DEADZONE:

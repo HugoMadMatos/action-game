@@ -54,23 +54,23 @@ func _get_input_direction() -> Vector2:
 	)
 
 func _calculate_world_direction_relative_to_camera(input_dir: Vector2) -> Vector3:
-	# Pega a rotação Y da câmera do player
-	var player := _body.get_parent()
-	if player and player.has_method("get_camera_rotation_y"):
-		var camera_y := player.get_camera_rotation_y()
-		
+	# Pega a rotação Y do CameraPivot do player
+	var camera_pivot := _body.get_node_or_null("CameraPivot")
+	if camera_pivot:
+		var camera_y: float = camera_pivot.rotation.y
+
 		# Rotaciona o input baseado na câmera
 		var cos_a := cos(camera_y)
 		var sin_a := sin(camera_y)
-		
-		var forward := Vector3(sin_a, 0, cos_a)
+
+		var forward := Vector3(-sin_a, 0, -cos_a)
 		var right := Vector3(cos_a, 0, -sin_a)
-		
+
 		var direction := (forward * -input_dir.y + right * input_dir.x).normalized()
 		return direction
-	
+
 	# Fallback: usa direção do mundo (sem rotação da câmera)
-	return (_body.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	return Vector3(input_dir.x, 0, input_dir.y).normalized()
 
 func _apply_velocity(direction: Vector3) -> void:
 	_body.velocity.x = direction.x * SPEED

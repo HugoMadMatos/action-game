@@ -64,16 +64,18 @@ Jogo 3D do gênero **Hack and Slash** desenvolvido na engine **Godot 4.6**.
 - [x] Materiais com cores sólidas (StandardMaterial3D + albedo)
 
 #### Controles
-| Ação | Teclado | Gamepad |
-|------|---------|---------|
-| Mover | WASD | Analógico Esquerdo |
-| Câmera | Setas | Analógico Direito |
-| Ataque Leve | 1 | Botão B |
-| Ataque Pesado | 2 | Botão Y |
-| Pular | 3 | Botão A |
-| Interagir | 4 | Botão X |
+| Ação | Teclado | Gamepad | Mouse |
+|------|---------|---------|-------|
+| Mover | WASD | Analógico Esquerdo | - |
+| Câmera | Setas | Analógico Direito | Movimento |
+| Ataque Leve | 1 | Botão B | - |
+| Ataque Pesado | 2 | Botão Y | - |
+| Pular | 3 | Botão A | - |
+| Interagir | 4 | Botão X | - |
+| Toggle Mouse | ESC | - | - |
 
 ### 🚧 Em Desenvolvimento
+- [ ] **TODO: Suporte a gamepad** (detecção de controle Xbox não funcionando)
 - [ ] Aplicação de texturas (imagens) nos materiais
 - [ ] Animações de ataque e movimento
 - [ ] Inimigos básicos com IA

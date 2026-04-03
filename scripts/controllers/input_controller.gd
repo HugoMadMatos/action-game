@@ -9,6 +9,7 @@ const MOVEMENT_DEADZONE: float = 0.2
 const CAMERA_DEADZONE: float = 0.1
 const CAMERA_SENSITIVITY_KEYBOARD: float = 0.03
 const CAMERA_SENSITIVITY_GAMEPAD: float = 0.15
+const MOUSE_SENSITIVITY: float = 0.002
 
 # === ESTADO ===
 var _movement_vector: Vector2 = Vector2.ZERO
@@ -105,8 +106,9 @@ func is_movement_active() -> bool:
 func get_camera_input() -> Vector2:
 	var keyboard := _get_keyboard_camera_input()
 	var gamepad := _get_gamepad_camera_input()
+	var mouse := _get_mouse_camera_input()
 	
-	var combined := keyboard + gamepad
+	var combined := keyboard + gamepad + mouse
 	if combined.length_squared() > CAMERA_DEADZONE:
 		return combined
 	
@@ -127,3 +129,14 @@ func _get_gamepad_camera_input() -> Vector2:
 		return Vector2.ZERO
 	
 	return input * CAMERA_SENSITIVITY_GAMEPAD
+
+# === CÂMERA (Mouse) ===
+func _get_mouse_camera_input() -> Vector2:
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var mouse_motion := Input.get_last_mouse_velocity()
+		return Vector2(
+			mouse_motion.x * MOUSE_SENSITIVITY,
+			mouse_motion.y * MOUSE_SENSITIVITY
+		)
+	
+	return Vector2.ZERO

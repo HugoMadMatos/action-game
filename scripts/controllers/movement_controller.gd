@@ -36,8 +36,8 @@ func _apply_gravity(delta: float) -> void:
 # === INPUT ===
 func _handle_input() -> void:
 	var input_dir := _get_input_direction()
-	var direction := _calculate_world_direction(input_dir)
-	
+	var direction := _calculate_world_direction_relative_to_camera(input_dir)
+
 	if direction:
 		_apply_velocity(direction)
 	else:
@@ -46,14 +46,30 @@ func _handle_input() -> void:
 func _get_input_direction() -> Vector2:
 	if _input:
 		return _input.get_movement_direction()
-	
+
 	# Fallback se input não estiver disponível
 	return Vector2(
 		Input.get_axis("move_left", "move_right"),
 		Input.get_axis("move_up", "move_down")
 	)
 
-func _calculate_world_direction(input_dir: Vector2) -> Vector3:
+func _calculate_world_direction_relative_to_camera(input_dir: Vector2) -> Vector3:
+	# Pega a rotação Y da câmera do player
+	var player := _body.get_parent()
+	if player and player.has_method("get_camera_rotation_y"):
+		var camera_y := player.get_camera_rotation_y()
+		
+		# Rotaciona o input baseado na câmera
+		var cos_a := cos(camera_y)
+		var sin_a := sin(camera_y)
+		
+		var forward := Vector3(sin_a, 0, cos_a)
+		var right := Vector3(cos_a, 0, -sin_a)
+		
+		var direction := (forward * -input_dir.y + right * input_dir.x).normalized()
+		return direction
+	
+	# Fallback: usa direção do mundo (sem rotação da câmera)
 	return (_body.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 func _apply_velocity(direction: Vector3) -> void:

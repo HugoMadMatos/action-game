@@ -73,6 +73,12 @@ func _handle_camera(delta: float) -> void:
 			camera_pivot.rotation.x -= camera_input.y
 			camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI/3, PI/3)
 
+func get_camera_rotation_y() -> float:
+	var camera_pivot := get_node_or_null("CameraPivot")
+	if camera_pivot:
+		return camera_pivot.rotation.y
+	return 0.0
+
 # === INPUTS ===
 func _handle_actions() -> void:
 	# Pulo

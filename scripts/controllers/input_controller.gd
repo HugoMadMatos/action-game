@@ -9,12 +9,14 @@ const MOVEMENT_DEADZONE: float = 0.2
 const CAMERA_DEADZONE: float = 0.1
 const CAMERA_SENSITIVITY_KEYBOARD: float = 0.03
 const CAMERA_SENSITIVITY_GAMEPAD: float = 0.15
-const MOUSE_SENSITIVITY: float = 0.002
+const MOUSE_SENSITIVITY: float = 0.0001
+const CAMERA_SMOOTHING: float = 0.15
 
 # === ESTADO ===
 var _movement_vector: Vector2 = Vector2.ZERO
 var _gamepad_movement: Vector2 = Vector2.ZERO
 var _camera_input: Vector2 = Vector2.ZERO
+var _smoothed_camera_input: Vector2 = Vector2.ZERO
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
@@ -109,8 +111,12 @@ func get_camera_input() -> Vector2:
 	var mouse := _get_mouse_camera_input()
 	
 	var combined := keyboard + gamepad + mouse
-	if combined.length_squared() > CAMERA_DEADZONE:
-		return combined
+	
+	# Suaviza o input com lerp
+	_smoothed_camera_input = _smoothed_camera_input.lerp(combined, CAMERA_SMOOTHING)
+	
+	if _smoothed_camera_input.length_squared() > CAMERA_DEADZONE:
+		return _smoothed_camera_input
 	
 	return Vector2.ZERO
 

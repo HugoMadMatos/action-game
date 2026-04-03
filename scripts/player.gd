@@ -2,17 +2,16 @@ extends CharacterBody3D
 class_name Player
 
 ## Classe do Jogador - Hack and Slash 3D
-## Responsável por movimento, combate e estado do jogador
+## Gerencia controllers e estado geral do jogador
 
-# === CONSTANTES ===
-const SPEED: float = 5.0
-const JUMP_VELOCITY: float = 4.5
-const GRAVITY: float = 9.8
-
-# === VARIÁVEIS DE ESTADO ===
+# === ESTADO ===
 var _health: int = 100
-var _is_attacking: bool = false
-var _can_attack: bool = true
+var _is_alive: bool = true
+
+# === CONTROLLERS (Composição) ===
+var movement: MovementController
+var interaction: InteractionController
+var attacks: AttackController
 
 # === PROPRIEDADES (Encapsulamento) ===
 var health: int:
@@ -22,55 +21,59 @@ var health: int:
 		if _health <= 0:
 			_on_death()
 
-# === MÉTODOS DO GODOT ===
+# === INICIALIZAÇÃO ===
+func _ready() -> void:
+	# Cria e adiciona controllers
+	movement = MovementController.new()
+	interaction = InteractionController.new()
+	attacks = AttackController.new()
+	
+	add_child(movement)
+	add_child(interaction)
+	add_child(attacks)
+
+# === LOOP PRINCIPAL ===
 func _physics_process(delta: float) -> void:
-	# Aplica gravidade
-	if not is_on_floor():
-		velocity.y -= GRAVITY * delta
-	
-	# Processa entrada
-	_handle_movement(delta)
-	
-	# Move o personagem
-	move_and_slide()
-
-# === MÉTODOS DE MOVIMENTO ===
-func _handle_movement(delta: float) -> void:
-	var input_dir := Vector2.ZERO
-	input_dir.x = Input.get_axis("ui_left", "ui_right")
-	input_dir.y = Input.get_axis("ui_up", "ui_down")
-	
-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	
-	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-
-# === MÉTODOS DE COMBATE ===
-func attack() -> void:
-	if not _can_attack:
+	if not _is_alive:
 		return
 	
-	_is_attacking = true
-	_can_attack = false
+	# Delega para o controller de movimento
+	movement.process_movement(delta)
 	
-	# TODO: Implementar lógica de ataque
-	print("Player atacou!")
-	
-	# Cooldown simples
-	await get_tree().create_timer(0.5).timeout
-	_can_attack = true
-	_is_attacking = false
+	# Processa inputs
+	_handle_actions()
 
+# === INPUTS ===
+func _handle_actions() -> void:
+	# Pulo
+	if Input.is_action_just_pressed("ui_accept"):
+		movement.jump()
+	
+	# Interação
+	if Input.is_action_just_pressed("ui_focus_next"):
+		interaction.try_interact()
+	
+	# Ataques
+	if Input.is_action_just_pressed("ui_select"):
+		attacks.perform_attack("light")
+	
+	if Input.is_action_just_pressed("ui_cancel"):
+		attacks.perform_attack("heavy")
+
+# === DANO E MORTE ===
 func take_damage(amount: int) -> void:
+	if not _is_alive:
+		return
+	
 	health -= amount
-	print("Player recebeu %d de dano. Vida atual: %d" % [amount, _health])
+	print("Player recebeu %d de dano. Vida: %d/%d" % [amount, _health, 100])
 
-# === MÉTODOS INTERNOS ===
 func _on_death() -> void:
+	_is_alive = false
 	print("Player morreu!")
-	# TODO: Implementar lógica de morte
+	# TODO: Animação de morte, respawn, etc
 	queue_free()
+
+# === GETTERS ===
+func is_alive() -> bool:
+	return _is_alive

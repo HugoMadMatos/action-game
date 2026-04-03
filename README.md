@@ -97,12 +97,12 @@ hugo-madeira/
 │   ├── main.tscn              # Cena principal com cenário
 │   └── player.tscn            # Cena do personagem (box + câmera)
 └── scripts/
-    ├── player.gd               # Script principal do jogador
-    └── controllers/
-        ├── input_controller.gd       # Centraliza inputs (teclado + gamepad)
-        ├── movement_controller.gd    # Movimento, pulo e gravidade
-        ├── interaction_controller.gd # Interação com objetos
-        └── attack_controller.gd      # Sistema de ataques com herança
+	├── player.gd               # Script principal do jogador
+	└── controllers/
+		├── input_controller.gd       # Centraliza inputs (teclado + gamepad)
+		├── movement_controller.gd    # Movimento, pulo e gravidade
+		├── interaction_controller.gd # Interação com objetos
+		└── attack_controller.gd      # Sistema de ataques com herança
 ```
 
 ## Arquitetura

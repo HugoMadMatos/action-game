@@ -49,8 +49,8 @@ func _get_input_direction() -> Vector2:
 	
 	# Fallback se input não estiver disponível
 	return Vector2(
-		Input.get_axis("ui_left", "ui_right"),
-		Input.get_axis("ui_up", "ui_down")
+		Input.get_axis("move_left", "move_right"),
+		Input.get_axis("move_up", "move_down")
 	)
 
 func _calculate_world_direction(input_dir: Vector2) -> Vector3:

@@ -6,10 +6,14 @@ class_name InputController
 
 # === CONSTANTES DE INPUT ===
 const MOVEMENT_DEADZONE: float = 0.2
+const CAMERA_DEADZONE: float = 0.1
+const CAMERA_SENSITIVITY_KEYBOARD: float = 0.03
+const CAMERA_SENSITIVITY_GAMEPAD: float = 0.4
 
 # === ESTADO ===
 var _movement_vector: Vector2 = Vector2.ZERO
 var _gamepad_movement: Vector2 = Vector2.ZERO
+var _camera_input: Vector2 = Vector2.ZERO
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
@@ -33,8 +37,8 @@ func get_movement_direction() -> Vector2:
 
 func _get_keyboard_movement() -> Vector2:
 	return Vector2(
-		Input.get_axis("ui_left", "ui_right"),
-		Input.get_axis("ui_up", "ui_down")
+		Input.get_axis("move_left", "move_right"),
+		Input.get_axis("move_up", "move_down")
 	)
 
 func _get_gamepad_movement() -> Vector2:
@@ -52,16 +56,16 @@ func _update_gamepad_input() -> void:
 
 # === AÇÕES (Teclado) ===
 func is_jump_pressed() -> bool:
-	return Input.is_action_just_pressed("ui_accept")
+	return Input.is_action_just_pressed("jump")
 
 func is_interact_pressed() -> bool:
-	return Input.is_action_just_pressed("ui_focus_next")
+	return Input.is_action_just_pressed("interact")
 
 func is_light_attack_pressed() -> bool:
-	return Input.is_action_just_pressed("ui_select")
+	return Input.is_action_just_pressed("light_attack")
 
 func is_heavy_attack_pressed() -> bool:
-	return Input.is_action_just_pressed("ui_cancel")
+	return Input.is_action_just_pressed("heavy_attack")
 
 # === AÇÕES (Gamepad) ===
 func is_gamepad_jump_pressed() -> bool:
@@ -92,3 +96,30 @@ func is_any_heavy_attack_pressed() -> bool:
 # === MOVIMENTO CONTÍNUO ===
 func is_movement_active() -> bool:
 	return get_movement_direction().length_squared() > 0.0
+
+# === CÂMERA ===
+func get_camera_input() -> Vector2:
+	var keyboard := _get_keyboard_camera_input()
+	var gamepad := _get_gamepad_camera_input()
+	
+	var combined := keyboard + gamepad
+	if combined.length_squared() > CAMERA_DEADZONE:
+		return combined
+	
+	return Vector2.ZERO
+
+func _get_keyboard_camera_input() -> Vector2:
+	return Vector2(
+		Input.get_axis("camera_left", "camera_right"),
+		Input.get_axis("camera_up", "camera_down")
+	) * CAMERA_SENSITIVITY_KEYBOARD
+
+func _get_gamepad_camera_input() -> Vector2:
+	var x := Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
+	var y := -Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
+	
+	var input := Vector2(x, y)
+	if input.length_squared() < CAMERA_DEADZONE:
+		return Vector2.ZERO
+	
+	return input * CAMERA_SENSITIVITY_GAMEPAD

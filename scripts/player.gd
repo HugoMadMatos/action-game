@@ -45,22 +45,39 @@ func _physics_process(delta: float) -> void:
 	
 	# Processa inputs
 	_handle_actions()
+	
+	# Processa câmera
+	_handle_camera(delta)
+
+# === CÂMERA ===
+func _handle_camera(delta: float) -> void:
+	var camera_input := input.get_camera_input()
+	
+	if camera_input.length_squared() > 0:
+		var camera_pivot := get_node_or_null("CameraPivot")
+		if camera_pivot:
+			# Rotação horizontal (Y)
+			camera_pivot.rotation.y -= camera_input.x
+			
+			# Rotação vertical (X) - com limite
+			camera_pivot.rotation.x -= camera_input.y
+			camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI/3, PI/3)
 
 # === INPUTS ===
 func _handle_actions() -> void:
 	# Pulo
-	if input.is_any_jump_pressed():
+	if input.is_jump_pressed():
 		movement.jump()
 	
 	# Interação
-	if input.is_any_interact_pressed():
+	if input.is_interact_pressed():
 		interaction.try_interact()
 	
 	# Ataques
-	if input.is_any_light_attack_pressed():
+	if input.is_light_attack_pressed():
 		attacks.perform_attack("light")
 	
-	if input.is_any_heavy_attack_pressed():
+	if input.is_heavy_attack_pressed():
 		attacks.perform_attack("heavy")
 
 # === DANO E MORTE ===

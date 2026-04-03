@@ -8,7 +8,7 @@ class_name InputController
 const MOVEMENT_DEADZONE: float = 0.2
 const CAMERA_DEADZONE: float = 0.1
 const CAMERA_SENSITIVITY_KEYBOARD: float = 0.03
-const CAMERA_SENSITIVITY_GAMEPAD: float = 0.4
+const CAMERA_SENSITIVITY_GAMEPAD: float = 0.15
 
 # === ESTADO ===
 var _movement_vector: Vector2 = Vector2.ZERO

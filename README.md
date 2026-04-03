@@ -30,10 +30,10 @@ Jogo 3D do gênero **Hack and Slash** desenvolvido na engine **Godot 4.6**.
   - `MovementController` - Movimento, pulo, gravidade
   - `InteractionController` - Interação com objetos próximos
   - `AttackController` - Sistema de ataques com herança
-    - `BaseAttack` (classe base)
-    - `LightAttack` (ataque leve, 10 dmg)
-    - `HeavyAttack` (ataque pesado, 25 dmg)
-    - `JumpAttack` (ataque aéreo, 20 dmg)
+	- `BaseAttack` (classe base)
+	- `LightAttack` (ataque leve, 10 dmg)
+	- `HeavyAttack` (ataque pesado, 25 dmg)
+	- `JumpAttack` (ataque aéreo, 20 dmg)
 
 - **Cenário (Main Scene)**
   - Chão plano 50x50 com colisão
@@ -74,11 +74,11 @@ hugo-madeira/
 │   ├── main.tscn          # Cena principal com cenário
 │   └── player.tscn        # Cena do personagem
 └── scripts/
-    ├── player.gd           # Script principal do jogador
-    └── controllers/
-        ├── movement_controller.gd      # Movimento e pulo
-        ├── interaction_controller.gd   # Interação com objetos
-        └── attack_controller.gd        # Sistema de ataques
+	├── player.gd           # Script principal do jogador
+	└── controllers/
+		├── movement_controller.gd      # Movimento e pulo
+		├── interaction_controller.gd   # Interação com objetos
+		└── attack_controller.gd        # Sistema de ataques
 ```
 
 ## Arquitetura

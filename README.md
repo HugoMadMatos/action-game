@@ -56,13 +56,14 @@ Jogo 3D do gênero **Hack and Slash** desenvolvido na engine **Godot 4.6**.
 - [ ] Sistema de save/load
 
 ## Controles
-| Ação | Tecla |
-|------|-------|
-| Mover | WASD / Setas |
-| Pular | Enter |
-| Interação | Tab |
-| Ataque Leve | Espaço |
-| Ataque Pesado | Esc |
+| Ação | Teclado | Gamepad |
+|------|---------|---------|
+| Mover | WASD | Analógico Esquerdo |
+| Câmera | Setas | Analógico Direito |
+| Pular | 3 | Botão A |
+| Interagir | 4 | Botão X |
+| Ataque Leve | 1 | Botão B |
+| Ataque Pesado | 2 | Botão Y |
 
 ## Estrutura do Projeto
 ```

@@ -44,8 +44,8 @@ func _find_nearest_interactable() -> Node3D:
 	
 	var result := space_state.intersect_ray(query)
 	if result:
-		var collider := result.collider
-		if collider.has_method("interact"):
+		var collider := result.collider as Node3D
+		if collider and collider.has_method("interact"):
 			return collider
 	
 	return null

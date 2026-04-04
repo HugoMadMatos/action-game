@@ -25,16 +25,16 @@ var health: int:
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
-	# Cria e adiciona controllers
+	# Cria e adiciona controllers (ordem importa!)
 	input = InputController.new()
-	movement = MovementController.new()
 	camera_ctrl = CameraController.new()
+	movement = MovementController.new()
 	interaction = InteractionController.new()
 	attacks = AttackController.new()
 	
 	add_child(input)
-	add_child(movement)
 	add_child(camera_ctrl)
+	add_child(movement)
 	add_child(interaction)
 	add_child(attacks)
 	

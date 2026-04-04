@@ -11,6 +11,7 @@ var _is_alive: bool = true
 # === CONTROLLERS (Composição) ===
 var input: InputController
 var movement: MovementController
+var camera_ctrl: CameraController
 var interaction: InteractionController
 var attacks: AttackController
 
@@ -27,11 +28,13 @@ func _ready() -> void:
 	# Cria e adiciona controllers
 	input = InputController.new()
 	movement = MovementController.new()
+	camera_ctrl = CameraController.new()
 	interaction = InteractionController.new()
 	attacks = AttackController.new()
 	
 	add_child(input)
 	add_child(movement)
+	add_child(camera_ctrl)
 	add_child(interaction)
 	add_child(attacks)
 	
@@ -57,27 +60,7 @@ func _physics_process(delta: float) -> void:
 	_handle_actions()
 	
 	# Processa câmera
-	_handle_camera(delta)
-
-# === CÂMERA ===
-func _handle_camera(delta: float) -> void:
-	var camera_input := input.get_camera_input()
-	
-	if camera_input.length_squared() > 0:
-		var camera_pivot := get_node_or_null("CameraPivot")
-		if camera_pivot:
-			# Rotação horizontal (Y)
-			camera_pivot.rotation.y -= camera_input.x
-			
-			# Rotação vertical (X) - com limite
-			camera_pivot.rotation.x -= camera_input.y
-			camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI/3, PI/3)
-
-func get_camera_rotation_y() -> float:
-	var camera_pivot := get_node_or_null("CameraPivot")
-	if camera_pivot:
-		return camera_pivot.rotation.y
-	return 0.0
+	camera_ctrl.process_camera(delta)
 
 # === INPUTS ===
 func _handle_actions() -> void:

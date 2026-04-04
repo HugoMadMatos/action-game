@@ -12,6 +12,7 @@ const GRAVITY: float = 9.8
 # === REFERÊNCIA AO PARENT ===
 var _body: CharacterBody3D
 var _input: InputController
+var _camera: CameraController
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
@@ -21,6 +22,9 @@ func _ready() -> void:
 	
 	# Encontra o InputController no pai
 	_input = _body.get_node_or_null("InputController")
+	
+	# Encontra o CameraController no pai
+	_camera = _body.get_node_or_null("CameraController")
 
 # === MÉTODO PRINCIPAL ===
 func process_movement(delta: float) -> void:
@@ -54,10 +58,9 @@ func _get_input_direction() -> Vector2:
 	)
 
 func _calculate_world_direction_relative_to_camera(input_dir: Vector2) -> Vector3:
-	# Pega a rotação Y do CameraPivot do player
-	var camera_pivot := _body.get_node_or_null("CameraPivot")
-	if camera_pivot:
-		var camera_y: float = camera_pivot.rotation.y
+	# Pega a rotação Y do CameraController
+	if _camera:
+		var camera_y: float = _camera.get_camera_rotation_y()
 
 		# Rotaciona o input baseado na câmera
 		var cos_a := cos(camera_y)

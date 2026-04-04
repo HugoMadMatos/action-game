@@ -6,17 +6,10 @@ class_name InputController
 
 # === CONSTANTES DE INPUT ===
 const MOVEMENT_DEADZONE: float = 0.2
-const CAMERA_DEADZONE: float = 0.1
-const CAMERA_SENSITIVITY_KEYBOARD: float = 0.03
-const CAMERA_SENSITIVITY_GAMEPAD: float = 0.15
-const MOUSE_SENSITIVITY: float = 0.002
-const CAMERA_SMOOTHING: float = 1.0
 
 # === ESTADO ===
 var _movement_vector: Vector2 = Vector2.ZERO
 var _gamepad_movement: Vector2 = Vector2.ZERO
-var _camera_input: Vector2 = Vector2.ZERO
-var _smoothed_camera_input: Vector2 = Vector2.ZERO
 
 # === INICIALIZAÇÃO ===
 func _ready() -> void:
@@ -103,46 +96,3 @@ func is_any_heavy_attack_pressed() -> bool:
 # === MOVIMENTO CONTÍNUO ===
 func is_movement_active() -> bool:
 	return get_movement_direction().length_squared() > 0.0
-
-# === CÂMERA ===
-func get_camera_input() -> Vector2:
-	var keyboard := _get_keyboard_camera_input()
-	var gamepad := _get_gamepad_camera_input()
-	var mouse := _get_mouse_camera_input()
-	
-	var combined := keyboard + gamepad + mouse
-	
-	# Suaviza o input com lerp
-	_smoothed_camera_input = _smoothed_camera_input.lerp(combined, CAMERA_SMOOTHING)
-	
-	if _smoothed_camera_input.length_squared() > CAMERA_DEADZONE:
-		return _smoothed_camera_input
-	
-	return Vector2.ZERO
-
-func _get_keyboard_camera_input() -> Vector2:
-	return Vector2(
-		Input.get_axis("camera_left", "camera_right"),
-		Input.get_axis("camera_up", "camera_down")
-	) * CAMERA_SENSITIVITY_KEYBOARD
-
-func _get_gamepad_camera_input() -> Vector2:
-	var x := Input.get_joy_axis(0, JOY_AXIS_RIGHT_X)
-	var y := -Input.get_joy_axis(0, JOY_AXIS_RIGHT_Y)
-	
-	var input := Vector2(x, y)
-	if input.length_squared() < CAMERA_DEADZONE:
-		return Vector2.ZERO
-	
-	return input * CAMERA_SENSITIVITY_GAMEPAD
-
-# === CÂMERA (Mouse) ===
-func _get_mouse_camera_input() -> Vector2:
-	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		var mouse_motion := Input.get_last_mouse_velocity()
-		return Vector2(
-			mouse_motion.x * MOUSE_SENSITIVITY,
-			mouse_motion.y * MOUSE_SENSITIVITY
-		)
-	
-	return Vector2.ZERO

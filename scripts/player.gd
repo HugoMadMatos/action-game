@@ -62,6 +62,10 @@ func _physics_process(delta: float) -> void:
 	# Processa câmera
 	camera_ctrl.process_camera(delta)
 
+# === CAPTURA DE INPUT DO MOUSE ===
+func _input(event: InputEvent) -> void:
+	camera_ctrl.handle_input_event(event)
+
 # === INPUTS ===
 func _handle_actions() -> void:
 	# Pulo
